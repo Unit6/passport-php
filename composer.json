@@ -1,0 +1,34 @@
+{
+    "name": "unit6/passport",
+    "type": "library",
+    "description": "Use the Eurolink single sign-on service Passport.",
+    "keywords": ["passport"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Unit6",
+            "email": "team@unit6websites.com",
+            "homepage": "http://www.unit6websites.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://unit6.github.io/satis"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "unit6/http": "^0.2",
+        "unit6/hawk": "^2.0",
+        "unit6/jwt": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Unit6\\Passport\\": "src/"
+        }
+    }
+}
