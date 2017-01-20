@@ -36,7 +36,7 @@ $client = new Passport\Client([
 	'host' => 'api.example.org'
 ]);
 
-[...]
+# ...
 ```
 
 ### Register a user:
@@ -44,7 +44,7 @@ $client = new Passport\Client([
 A user can be registered by approved applications with a `Pending` state. This is helpful if you intend to verify their account beforehand:
 
 ```php
-[...]
+# ...
 
 $user = (new Passport\User())
         ->withName('John Smith')
@@ -57,7 +57,7 @@ $registered = $client->registerUser($user);
 # ID: $user->getId()
 # Message: $client->getMessage()
 
-[...]
+# ...
 ```
 
 ### Update user status:
@@ -65,11 +65,11 @@ $registered = $client->registerUser($user);
 Once the user has clicked an 'activation' link sent by email, their account status can be changed to `Active`. You can then allow them to login.
 
 ```php
-[...]
+# ...
 
 $update = $user->updateStatus(Passport\User::STATUS_ACTIVE);
 
-[...]
+# ...
 ```
 
 ### Login a user:
@@ -77,7 +77,7 @@ $update = $user->updateStatus(Passport\User::STATUS_ACTIVE);
 Use the credentials to authenticate a user during a login process:
 
 ```php
-[...]
+# ...
 
 $user = (new Passport\User())
         ->withClient($client)
@@ -86,7 +86,7 @@ $user = (new Passport\User())
 
 $user->authenticate();
 
-[...]
+# ...
 ```
 
 ### Get user information:
@@ -94,7 +94,7 @@ $user->authenticate();
 You can obtain user information specific to your application by requesting their `Persona` by passing your `$applicationId`:
 
 ```php
-[...]
+# ...
 
 $persona = $user->getPersona($applicationId);
 
