@@ -36,25 +36,25 @@ final class Client
     const VERSION = 'v1';
 
     /**
-     * API Protocol
+     * HTTP Scheme
      *
      * @var string
      */
-    const PROTOCOL = 'https';
+    private $scheme = 'https';
 
     /**
-     * API Host
+     * Content Type
      *
      * @var string
      */
-    const HOST = 'api.passport.eurolink.co';
+    private $contentType = 'application/json';
 
     /**
-     * API Content Type
+     * HTTP Host
      *
      * @var string
      */
-    const CONTENT_TYPE = 'application/json';
+    private $host = 'passport.eurolink.co';
 
     /**
      * API Credentials
@@ -80,11 +80,11 @@ final class Client
     /**
      * Client constructor
      *
-     * @param array $credentials Your Passport client and service keys
+     * @param array $options Your Passport client and service keys.
      *
      * @return void
      */
-    public function __construct(array $credentials)
+    public function __construct(array $options)
     {
         if ( ! function_exists('curl_init')) {
             throw new RuntimeException('cURL is required');
@@ -94,9 +94,23 @@ final class Client
             throw new RuntimeException('JSON is required');
         }
 
-        if ( empty($credentials)) {
+        if (isset($options['scheme'])) {
+            $this->scheme = $options['scheme'];
+        }
+
+        if (isset($options['content_type'])) {
+            $this->contentType = $options['content_type'];
+        }
+
+        if (isset($options['host'])) {
+            $this->host = $options['host'];
+        }
+
+        if ( ! isset($options['credentials']) || empty($options['credentials'])) {
             throw new InvalidArgumentException('Passport credentials required');
         }
+
+        $credentials = $options['credentials'];
 
         if ( ! isset($credentials['id']) || empty($credentials['id'])) {
             throw new UnexpectedValueException('Passport "id" missing');
@@ -114,26 +128,13 @@ final class Client
     }
 
     /**
-     * Get API Endpoint
-     *
-     * @param string $resource API resource to request.
-     * @param string $method   HTTP request method.
-     * @param array  $data     HTTP request data.
+     * Get API Version
      *
      * @return string
      */
-    public function getEndpointUrl($resource, $method, array &$data = [])
+    public function getVersion()
     {
-        $endpoint = self::PROTOCOL . '://' . self::HOST . '/' . self::VERSION . '/' . $resource;
-
-        $uri = URI::parse($endpoint);
-
-        if ($method === 'GET') {
-            $uri = $uri->withQuery(http_build_query($data));
-            $data = [];
-        }
-
-        return sprintf('%s', $uri);
+        return self::VERSION;
     }
 
     /**
@@ -143,7 +144,27 @@ final class Client
      */
     public function getContentType()
     {
-        return self::CONTENT_TYPE;
+        return $this->contentType;
+    }
+
+    /**
+     * Get API Scheme/Protocol
+     *
+     * @return string
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * Get API Host
+     *
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
     }
 
     /**
@@ -154,6 +175,43 @@ final class Client
     public function getCredentials()
     {
         return $this->credentials;
+    }
+
+    /**
+     * Get Login URL
+     *
+     * @return string
+     */
+    public function getLoginUrl()
+    {
+        $credentials = $this->getCredentials();
+
+        $url = $this->getScheme() . '://' . $this->getHost() . '/?app=%s';
+
+        return sprintf($url, $credentials['id']);
+    }
+
+    /**
+     * Get API Endpoint
+     *
+     * @param string $resource API resource to request.
+     * @param string $method   HTTP request method.
+     * @param array  $data     HTTP request data.
+     *
+     * @return string
+     */
+    public function getEndpointUrl($resource, $method, array &$data = [])
+    {
+        $endpoint = $this->getScheme() . '://api.' . $this->getHost() . '/' . $this->getVersion() . '/' . $resource;
+
+        $uri = URI::parse($endpoint);
+
+        if ($method === 'GET') {
+            $uri = $uri->withQuery(http_build_query($data));
+            $data = [];
+        }
+
+        return sprintf('%s', $uri);
     }
 
     /**
@@ -320,7 +378,8 @@ final class Client
         }
 
         /*
-        echo 'Content-Type: ' . $response->getHeaderLine('Content-Type') . PHP_EOL;
+        echo 'Server-Authorization: ' . $response->getHeaderLine('server-authorization') . PHP_EOL;
+        echo 'Content-Type: ' . $response->getHeaderLine('content-type') . PHP_EOL;
         echo 'Status Code: ' . $response->getStatusCode() . PHP_EOL;
         echo 'Reason Phrase: ' . $response->getReasonPhrase() . PHP_EOL;
         echo 'Contents: ' . PHP_EOL . $contents . PHP_EOL;

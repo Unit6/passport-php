@@ -21,9 +21,9 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $keys;
+        global $options;
 
-        $this->client = new Passport\Client($keys);
+        $this->client = new Passport\Client($options);
     }
 
     public function tearDown()

@@ -21,14 +21,31 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $keys;
+        global $options;
 
-        $this->client = new Passport\Client($keys);
+        $this->client = new Passport\Client($options);
     }
 
     public function tearDown()
     {
         unset($this->client);
+    }
+
+    public function testGetLoginUrl()
+    {
+        $url = $this->client->getLoginUrl();
+
+        $parts = parse_url($url);
+
+        $this->assertEquals(PASSPORT_SCHEME, $parts['scheme']);
+        $this->assertEquals(PASSPORT_HOST, $parts['host']);
+        $this->assertArrayHasKey('query', $parts);
+
+        $query = [];
+        parse_str($parts['query'], $query);
+
+        $this->assertArrayHasKey('app', $query);
+        $this->assertNotEmpty($query['app']);
     }
 
     public function testGetApplicationByID()

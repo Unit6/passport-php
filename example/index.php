@@ -12,7 +12,7 @@
 
     use Unit6\Passport;
 
-    $client = new Passport\Client($keys);
+    $client = new Passport\Client($options);
 
     $name = USER_NAME;
     $email = USER_EMAIL;

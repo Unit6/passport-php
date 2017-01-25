@@ -1,4 +1,2 @@
 id:<publicKey>
-key:<privateKey>
-algorithm:sha256
-user:<username>
+secret:<privateKey>
